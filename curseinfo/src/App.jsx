@@ -1,35 +1,52 @@
-const Course = ({course})=>{
-  return(
-    <>
-      <Header title={course.name} />
-      <Content parts={course.parts} />
-    </>
+const Course = ({course})=>{  
+  const parts = course.parts
+  const total = parts.reduce((ac, ex)=>{
+    return ac + ex.exercises
+  },0)
+  return( 
+    <table>
+      <Header title={course.name} /> 
+      <tbody>
+        <Content parts={course.parts} />
+        <Total total={total} />
+      </tbody>
+    </table>
   )
 }
 
 const Header = ({title})=>{
   return(
-    <header>
+    <thead>
       <h1>{title}</h1>
-    </header>
+    </thead>
   )
 }
 
 const Content = ({parts})=>{
   return(
-    <ul>
-      {parts.map(part => 
-        <Part key={part.id} name={part.name} exercises={part.exercises} />
-      )}
-    </ul>
+      <>
+        {parts.map(part => 
+          <Part key={part.id} name={part.name} exercises={part.exercises} />
+        )}
+      </>
   )
 }
 
 const Part = ({name, exercises})=>{
   return(
-    <>
-      <li>{name} {exercises}</li>    
-    </>
+    <tr>
+      <td>{name} {exercises}</td>    
+    </tr>
+  )
+}
+
+const Total = ({total})=>{
+  return(
+    <tr>
+      <td>
+          <b>total of {total} exercises</b>
+        </td>
+    </tr>
   )
 }
 
@@ -53,10 +70,9 @@ const App = () => {
         exercises: 14,
         id: 3
       }
-
     ]
   }
-
+  
   return <Course course={course} />
 }
 
