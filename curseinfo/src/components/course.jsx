@@ -17,7 +17,7 @@ const Course = ({course})=>{
   const Thead = ({title})=>{
     return(
       <thead>
-        <h2>{title}</h2>
+        <th>{title}</th> 
       </thead>
     )
   }
