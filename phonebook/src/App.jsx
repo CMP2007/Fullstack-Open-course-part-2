@@ -8,9 +8,18 @@ const App = () => {
 
 const hanSubmit = (e)=> {
   e.preventDefault();
-  const objName = {name: newName}
-  setPersons(persons.concat(objName))
-  setNewName("")
+  const checkName = persons.findIndex(person =>person.name === newName)
+  console.log(checkName);
+
+  if (checkName === -1) {
+    const objName = {name: newName}
+    setPersons(persons.concat(objName))
+    setNewName("")
+  }
+  else{
+    alert(`${newName} is already added to phonebook`)
+    setNewName("")
+  }
 }
 
 const handleName = (e)=>{
@@ -31,7 +40,7 @@ const handleName = (e)=>{
       </form>
       <h2>Numbers</h2>
       <ul>
-        {persons.map(person => <li key={person.name}>{person.name}</li>)}
+        {persons.map(person => <li key={person.length}>{person.name}</li>)}
       </ul>
     </>
   )
