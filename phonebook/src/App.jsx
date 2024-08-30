@@ -1,17 +1,8 @@
-const List = ({all, filter})=>{
-  if (!filter) {
-   return(
-    all.map(person => <li key={person.id}><b>{person.name} {person.number}</b></li>)
-   )
-  }
-  else{
-   return(
-    filter.map(person => <li key={person.id}><b>{person.name} {person.number}</b></li>)
-   )
-  }
-}
-
 import { useState } from 'react'
+
+import Filter from './components/filter'
+import PersonForm from './components/personForm'
+import List from './components/list'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -25,6 +16,7 @@ const App = () => {
   const [newSearch, setNewSearch] = useState('')
   const [personFilter, setPersonFilter] = useState('')
 
+  //This function uses findIndex to validate if the data already exists and save it or raise the alert
   const hanSubmit = (e)=> {
     e.preventDefault();
     const checkName = persons.findIndex(person =>person.name === newName)
@@ -51,6 +43,7 @@ const App = () => {
     }
   }
 
+  //These three handle functions are the event handlers of the inputs
   const handleName = (e)=>{
     console.log(e.target.value);
     setNewName(e.target.value)
@@ -71,30 +64,26 @@ const App = () => {
       setPersonFilter(null)
     }
   }
-
+  //This function generates and saves a new array with the filtered data
   const filter = ()=>{
     const tolowerSearch = newSearch.toLowerCase()
     const filtered =persons.filter(person => person.name.toLowerCase().includes(tolowerSearch))
     setPersonFilter(filtered)
     console.log(filtered);
   }
- 
+  
+  //These constants group the data and event handlers to be passed through the props
+  const handleEvents = [hanSubmit, handleName, handleNumber]
+  const newData= [newName, newNumber]
+
   return (
     <>
-      <h2>Phonebook</h2>
-      filter shown with <input onChange={handleSearch} />
-      <form onSubmit={hanSubmit}>
+      <h1>Phonebook</h1>
+      <Filter handleSearch={handleSearch}/>
+      
       <h2>Add a new</h2>
-        <div>
-          name: <input onChange={handleName} value={newName} required/>
-        </div>
-        <div>
-          Telefone: <input type="number" onChange={handleNumber} value={newNumber} required />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm handleEvents={handleEvents} newData={newData}  />
+
       <h2>Numbers</h2>
       <ul>
         <List all={persons} filter={personFilter} />
