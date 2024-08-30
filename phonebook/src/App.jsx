@@ -11,7 +11,6 @@ const List = ({all, filter})=>{
   }
 }
 
-
 import { useState } from 'react'
 
 const App = () => {
@@ -85,6 +84,7 @@ const App = () => {
       <h2>Phonebook</h2>
       filter shown with <input onChange={handleSearch} />
       <form onSubmit={hanSubmit}>
+      <h2>Add a new</h2>
         <div>
           name: <input onChange={handleName} value={newName} required/>
         </div>
