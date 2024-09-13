@@ -1,20 +1,28 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 import Filter from './components/filter'
 import PersonForm from './components/personForm'
 import List from './components/list'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
   const [personFilter, setPersonFilter] = useState('')
+
+  useEffect(() => {
+    console.log('promise start')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        console.log(response);
+        setPersons(response.data)
+      })
+  }, [])
+  console.log('render', persons.length, 'notes')
 
   //This function uses findIndex to validate if the data already exists and save it or raise the alert
   const hanSubmit = (e)=> {
