@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personsServises from './services/persons'
 
 import Filter from './components/filter'
 import PersonForm from './components/personForm'
@@ -14,30 +14,30 @@ const App = () => {
 
   useEffect(() => {
     console.log('promise start')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        console.log(response);
-        setPersons(response.data)
+    personsServises
+      .getAll()
+      .then(response =>{
+        setPersons(response)
       })
   }, [])
   console.log('render', persons.length, 'notes')
 
+  const checkName = persons.findIndex(person =>person.name === newName)
+  const checkNumber = persons.findIndex(person =>person.number === newNumber)
+
   //This function uses findIndex to validate if the data already exists and save it or raise the alert
   const hanSubmit = (e)=> {
     e.preventDefault();
-    const checkName = persons.findIndex(person =>person.name === newName)
-    console.log("name findIndex = ",checkName);
-
-    const checkNumber = persons.findIndex(person =>person.number === newNumber)
-    console.log("number findIndex = ",checkNumber);
-
     if (checkName === -1 && checkNumber === -1) {
-      const objName = {name: newName, number: newNumber, id: persons.length +1}
-      setPersons(persons.concat(objName))
+      console.log("name checked");
+      console.log("number checked");
+      const objName = {name: newName, number: newNumber}
       setNewName("")
       setNewNumber("")
+
+      personsServises
+        .create(objName)
+        .then(response => setPersons(persons.concat(response)))
     }
     else{
       if (checkName !==-1) {
@@ -53,17 +53,14 @@ const App = () => {
 
   //These three handle functions are the event handlers of the inputs
   const handleName = (e)=>{
-    console.log(e.target.value);
     setNewName(e.target.value)
   }
 
   const handleNumber = (e)=>{
-    console.log(e.target.value);
     setNewNumber(e.target.value)
   }
 
   const handleSearch = (e)=>{
-    console.log(e.target.value)
     setNewSearch(e.target.value)
     if (e.target.value) {
       filter()
@@ -77,8 +74,22 @@ const App = () => {
     const tolowerSearch = newSearch.toLowerCase()
     const filtered =persons.filter(person => person.name.toLowerCase().includes(tolowerSearch))
     setPersonFilter(filtered)
-    console.log(filtered);
+    console.log("filtering based on: ",filtered);
   }
+
+  const deletedPerson = (id)=>{
+    const person = persons.find(person => person.id === id)
+    const name = person.name
+    console.log(person);
+    if (window.confirm(`Are you sure you want to delete ${name} ?`)) {
+      personsServises
+      .deleted(id)
+      .then(response=>{
+        setPersons(persons.filter((person)=>person.id !== response.id))
+      })
+    }
+  } 
+  
   
   //These constants group the data and event handlers to be passed through the props
   const handleEvents = [hanSubmit, handleName, handleNumber]
@@ -94,7 +105,7 @@ const App = () => {
 
       <h2>Numbers</h2>
       <ul>
-        <List all={persons} filter={personFilter} />
+        <List all={persons} filter={personFilter} action={deletedPerson} />
       </ul>
     </>
   )
