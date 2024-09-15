@@ -20,17 +20,31 @@ const App = () => {
         setPersons(response)
       })
   }, [])
-  console.log('render', persons.length, 'notes')
 
   const checkName = persons.findIndex(person =>person.name === newName)
   const checkNumber = persons.findIndex(person =>person.number === newNumber)
+  const changeNumber = ()=>{
+    if (window.confirm(`${newName} is already registered in the address book, do you want to change the registered number for a new one?`)) {
+      const oldPerson = persons.find(person=>person.name === newName)
+      const changePerson = {...oldPerson, number: newNumber}
 
-  //This function uses findIndex to validate if the data already exists and save it or raise the alert
+      personsServises
+        .change(changePerson, oldPerson.id)
+        .then(response => {
+          setPersons(persons.map(person => person.id !== response.id ? person : response))              
+        })
+      setNewName("")  
+      setNewNumber("")
+    }         
+    else{
+      setNewName("")
+    }
+  }
+
+  //This function uses findIndex to validate if the data already exists and based on that decide what to do
   const hanSubmit = (e)=> {
     e.preventDefault();
     if (checkName === -1 && checkNumber === -1) {
-      console.log("name checked");
-      console.log("number checked");
       const objName = {name: newName, number: newNumber}
       setNewName("")
       setNewNumber("")
@@ -41,8 +55,7 @@ const App = () => {
     }
     else{
       if (checkName !==-1) {
-        alert(`${newName} is already added to phonebook`)
-        setNewName("")  
+        changeNumber()
       }
       else if (checkNumber !== -1) {
         alert(`the phone number ${newNumber} is already registered for another contact in the phone book`)
@@ -74,18 +87,18 @@ const App = () => {
     const tolowerSearch = newSearch.toLowerCase()
     const filtered =persons.filter(person => person.name.toLowerCase().includes(tolowerSearch))
     setPersonFilter(filtered)
-    console.log("filtering based on: ",filtered);
   }
 
   const deletedPerson = (id)=>{
     const person = persons.find(person => person.id === id)
     const name = person.name
-    console.log(person);
+
     if (window.confirm(`Are you sure you want to delete ${name} ?`)) {
       personsServises
       .deleted(id)
       .then(response=>{
         setPersons(persons.filter((person)=>person.id !== response.id))
+        console.log("deleted: ", person);
       })
     }
   } 

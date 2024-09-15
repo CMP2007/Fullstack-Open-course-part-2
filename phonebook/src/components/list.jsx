@@ -1,8 +1,4 @@
-const List = ({all, filter, action})=>{
-  console.log(action);
-  console.log(all);
-  
-  
+const List = ({all, filter, action})=>{  
     if (!filter) {
      return(
       all.map(person => {        
@@ -18,7 +14,10 @@ const List = ({all, filter, action})=>{
     }
     else{
      return(
-      filter.map(person => <li key={person.id}><b>{person.name} {person.number}</b></li>)
+      filter.map(person => 
+        <li key={person.id}>
+          <b>{person.name} {person.number}</b>
+        </li>)
      )
     }
   }

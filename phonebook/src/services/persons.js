@@ -17,6 +17,13 @@ const getAll = ()=> {
         .then(response => response.data)
       )
   }
+
+  const change = (changeNumber, id) =>{
+    return(
+      axios.put(`${baseUrl}/${id}`, changeNumber)
+      .then(response=>response.data)
+    )
+  }
   
   const deleted = (id) => {
     return (
@@ -27,4 +34,4 @@ const getAll = ()=> {
 
   }
 
-export default {getAll, create, deleted}
+export default {getAll, create, change, deleted}
