@@ -19,6 +19,10 @@ const App = () => {
       .then(response =>{
         setPersons(response)
       })
+      .catch(()=>{
+        alert("Failed to connect to server")
+      }
+      )
   }, [])
 
   const checkName = persons.findIndex(person =>person.name === newName)
@@ -32,6 +36,9 @@ const App = () => {
         .change(changePerson, oldPerson.id)
         .then(response => {
           setPersons(persons.map(person => person.id !== response.id ? person : response))              
+        })
+        .catch(()=>{
+          alert("Error: Could not modify the record")
         })
       setNewName("")  
       setNewNumber("")
@@ -52,6 +59,9 @@ const App = () => {
       personsServises
         .create(objName)
         .then(response => setPersons(persons.concat(response)))
+        .catch(()=>{
+          alert("Communication error: The contact could not be registered")
+        })
     }
     else{
       if (checkName !==-1) {
@@ -99,6 +109,9 @@ const App = () => {
       .then(response=>{
         setPersons(persons.filter((person)=>person.id !== response.id))
         console.log("deleted: ", person);
+      })
+      .catch(()=>{
+        alert("Error: Could not delete record")
       })
     }
   } 
