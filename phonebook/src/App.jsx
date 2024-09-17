@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import personsServises from './services/persons'
+import "./styles.css"
 
 import Filter from './components/filter'
 import PersonForm from './components/personForm'
 import List from './components/list'
+import Alert from './components/alert'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -11,6 +13,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
   const [personFilter, setPersonFilter] = useState('')
+  const [status, setStatus] = useState({event: null, name:""})
 
   useEffect(() => {
     console.log('promise start')
@@ -18,15 +21,18 @@ const App = () => {
       .getAll()
       .then(response =>{
         setPersons(response)
+        setStatus({event:null, name:null})
       })
       .catch(()=>{
-        alert("Failed to connect to server")
+        setStatus({event:"error",name: "Error: Failed to connect to server"})
       }
       )
   }, [])
 
   const checkName = persons.findIndex(person =>person.name === newName)
   const checkNumber = persons.findIndex(person =>person.number === newNumber)
+  const resetStatus = ()=>setTimeout(() => { setStatus({event:null, name:null})}, 3000)
+
   const changeNumber = ()=>{
     if (window.confirm(`${newName} is already registered in the address book, do you want to change the registered number for a new one?`)) {
       const oldPerson = persons.find(person=>person.name === newName)
@@ -36,9 +42,12 @@ const App = () => {
         .change(changePerson, oldPerson.id)
         .then(response => {
           setPersons(persons.map(person => person.id !== response.id ? person : response))              
+          setStatus({event:"modified",name: newName})  
+          resetStatus()        
         })
         .catch(()=>{
-          alert("Error: Could not modify the record")
+          setStatus({event:"error",name: "Error: The information has already been deleted from the server"})
+          setPersons(persons.filter(person => person.id !== oldPerson.id))
         })
       setNewName("")  
       setNewNumber("")
@@ -58,9 +67,13 @@ const App = () => {
 
       personsServises
         .create(objName)
-        .then(response => setPersons(persons.concat(response)))
+        .then(response => {
+          setPersons(persons.concat(response))
+          setStatus({event:"created",name: newName})      
+          resetStatus() 
+        })
         .catch(()=>{
-          alert("Communication error: The contact could not be registered")
+          setStatus({event:"error",name: "Error: The contact could not be registered"})
         })
     }
     else{
@@ -109,13 +122,14 @@ const App = () => {
       .then(response=>{
         setPersons(persons.filter((person)=>person.id !== response.id))
         console.log("deleted: ", person);
+        setStatus({event:"deleted",name: response.name})       
+        resetStatus()
       })
       .catch(()=>{
-        alert("Error: Could not delete record")
+        setStatus({event:"error",name: "Error: Could not delete record"})
       })
     }
-  } 
-  
+  }
   
   //These constants group the data and event handlers to be passed through the props
   const handleEvents = [hanSubmit, handleName, handleNumber]
@@ -124,6 +138,7 @@ const App = () => {
   return (
     <>
       <h1>Phonebook</h1>
+      <Alert status={status}/>
       <Filter handleSearch={handleSearch}/>
       
       <h2>Add a new</h2>
