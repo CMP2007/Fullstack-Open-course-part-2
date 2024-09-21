@@ -6,6 +6,7 @@ function App() {
   const [data, setData] = useState([])
   const [search, setSearch] = useState("")
   const [filter, setFilter] = useState([])
+  const [show, setShow] = useState("")
 
   const handleSearch = (e)=>{
     setSearch(e.target.value)
@@ -29,13 +30,18 @@ function App() {
 
   const load =()=>{
     if (search) {
-      return <Results countries={filter} />
+      return <Results countries={filter} activateShow={activateShow} show={show}/>
     }
     else {
       return <Results countries={data} />
     }
   }
 
+  const activateShow =(country)=>()=>{    
+    const newShow = country.name.common 
+    setShow(newShow)
+  }
+  
   return (
   <>
     <div>

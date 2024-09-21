@@ -1,13 +1,16 @@
-const Results =({countries})=>{
-  const printLanguages = (languages)=>{
-    const list = Object.values(languages);
-    const li = list.map(language => <li key={language}>{language}</li>)
-    return li
+import Details from "./details"
+const Results =({countries, activateShow, show})=>{
+  
+  const selectedCountry = countries.find(c => c.name.common === show);
+  const arrayCountry = [selectedCountry]
+  const openShow = (country)=>{
+    if (country.name.common == show) {
+      console.log(country.name.common);
+      return <Details countries={arrayCountry} />;
+    }
+    return null;
   }
-  const imgClass = {
-    width: 300,
-  }
-
+  
   if (countries.length > 10) {
     return(
       <>
@@ -20,41 +23,15 @@ const Results =({countries})=>{
       <ul>
         {countries.map((country)=>
         <li key={country.name.common}>
-          {country.name.common}
+          {country.name.common} 
+          <button onClick={activateShow(country)}>show</button>
+          {openShow(country)}
         </li>)}
     </ul>
     )
   }
   else{
-    return(
-      <>
-        {countries.map((country)=>
-        <ul key={country.name.common}>
-          <h2>{country.name.common}</h2>
-          <li>
-            <p>Capital: {country.capital}</p>
-          </li>
-          <li>
-            <p>Area: {country.area}</p>
-          </li>
-          <li>
-            <p>continents: {country.continents}</p>
-          </li>
-          <li>
-            <p>Languages:</p>
-            <ul>
-              {printLanguages(country.languages)}
-            </ul>
-          </li>
-          <li>
-            <p>Flag: </p><img src={country.flags.svg} alt="country.flags.alt" style={imgClass}/>
-          </li>
-          <li>
-            <p>coat of arms: </p><img src={country.coatOfArms.svg} alt=""style={imgClass} />
-          </li>
-        </ul>)}
-    </>
-    )
+    return <Details countries={countries} />
   }
 }
 
