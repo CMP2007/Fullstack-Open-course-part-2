@@ -1,8 +1,10 @@
 import Details from "./details"
-const Results =({countries, activateShow, show})=>{
+import Weather from "./weather"
+const Results =({countries, activateShow, show,weather,setWeather})=>{
   
   const selectedCountry = countries.find(c => c.name.common === show);
   const arrayCountry = [selectedCountry]
+  
   const openShow = (country)=>{
     if (country.name.common == show) {
       console.log(country.name.common);
@@ -31,7 +33,12 @@ const Results =({countries, activateShow, show})=>{
     )
   }
   else{
-    return <Details countries={countries} />
+    return (
+    <>
+      <Details countries={countries} />
+      <Weather  countries={countries} weather={weather} setWeather={setWeather}/>
+    </>
+  )
   }
 }
 
