@@ -1,4 +1,4 @@
-# Fullstack Open Course - Part 1
+# Fullstack Open Course - Part 2
 
 This is a solution to the exercises in Part 2 (third) of the Fullstack Open course.
 
